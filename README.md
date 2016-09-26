@@ -51,13 +51,48 @@ Computing the inverse of a square matrix can be done with the solve function in 
 
 For this assignment, assume that the matrix supplied is always invertible.
 
-In order to complete this assignment, you must do the following:
+My Solution
+Functions
 
-Fork the GitHub repository containing the stub R files at https://github.com/rdpeng/ProgrammingAssignment2 to create a copy under your own account.
-Clone your forked GitHub repository to your computer so that you can edit the files locally on your own machine.
-Edit the R file contained in the git repository and place your solution in that file (please do not rename the file).
-Commit your completed R file into YOUR git repository and push your git branch to the GitHub repository under your account.
-Submit to Coursera the URL to your GitHub repository that contains the completed R code for the assignment.
-Grading
+cachematrix.R:
 
-This assignment will be graded via peer assessment.
+## Caching the Inverse of a Matrix:
+## Matrix inversion is usually a costly computation and there may be some 
+## benefit to caching the inverse of a matrix rather than compute it repeatedly.
+## Below are a pair of functions that are used to create a special object that 
+## stores a matrix and caches its inverse.
+
+## This function creates a special "matrix" object that can cache its inverse.
+
+makeCacheMatrix <- function(x = matrix()) {
+        inv <- NULL
+        set <- function(y) {
+                x <<- y
+                inv <<- NULL
+        }
+        get <- function() x
+        setInverse <- function(inverse) inv <<- inverse
+        getInverse <- function() inv
+        list(set = set,
+             get = get,
+             setInverse = setInverse,
+             getInverse = getInverse)
+}
+
+
+## This function computes the inverse of the special "matrix" created by 
+## makeCacheMatrix above. If the inverse has already been calculated (and the 
+## matrix has not changed), then it should retrieve the inverse from the cache.
+
+cacheSolve <- function(x, ...) {
+        ## Return a matrix that is the inverse of 'x'
+        inv <- x$getInverse()
+        if (!is.null(inv)) {
+                message("getting cached data")
+                return(inv)
+        }
+        mat <- x$get()
+        inv <- solve(mat, ...)
+        x$setInverse(inv)
+        inv
+}
